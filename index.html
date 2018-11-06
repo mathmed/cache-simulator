@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Simulador de Cache</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Incluindo assets necessários -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous">
+    </script>
+
+    <link rel="stylesheet" href="assets/css/uikit.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/bootstrap.css" />
+    <script src="assets/js/uikit.min.js"></script>
+    <script src="assets/js/uikit-icons.min.js"></script>
+
+    <!-- Incluindo assets personalizados -->
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/styles.css" />
+    <script src="assets/js/main.js"></script>
+
+</head>
+
+<body>
+    
+    <!-- Div container -->
+    <div class = "">
+        <nav class="uk-navbar-container" uk-navbar>
+
+            <div class="uk-navbar-left">
+                <ul class="uk-navbar-nav">
+                    <li class="uk-active"><a href="#">Mapeamento direto</a></li>
+                    <li><a href="#">Mapeamento n-associativo</a></li>
+                    <li><a href="#">Mapeamento completamente associativo</a></li>
+                    
+                </ul>
+            </div>
+            
+        </nav>
+
+        <div class = "div-center margin-top">
+            <h2>Simulador de memória cache</h2>
+        </div>
+
+        <div class = "div-center">
+            <h3>By: <a class = "a-link" href = "https://github.com/mathmed" target = "_blank">@mathmed</a></h3>
+        </div>
+
+        <div class = "margin-left margin-top row">
+
+            <div class = "col-md-4">
+
+                <h3><b>Informações da Cache</b></h3>
+
+                <div class = "row">
+                    <div class = "col-md-8"><label for = "tam-cache">Tamanho da cache (potência de 2)</label></div>
+                    <div class = "col-md-2"> <input id = "tam_cache" type = "number" class = "uk-input"></div>
+                </div>
+
+                <div class = "row">
+                    <div class = "col-md-8"><label for = "tam-cache">Palavras por bloco (potência de 2)</label></div>
+                    <div class = "col-md-2"><input id = "qtd_palavras" type = "number" class = "uk-input"></div>
+                </div>
+
+                <button id = 'gerar-cache' type = "button" class = "uk-button uk-button-primary margin-top">Gerar Cache</button>
+
+                <div id = "msgs" class = "margin-top"></div>
+
+                <div id = "div-table-info" class = "margin-top"></div>
+
+            </div>
+            
+            <div class = "col-md-1"></div>
+            <div class = "col-md-6">
+
+                <table class="uk-table uk-table-divider" id = "table">
+                    <thead>
+                        <tr>
+                            <th>Índice</th>
+                            <th>Válido</th>
+                            <th>Tag</th>
+                            <th>Dados</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+    <!-- /Div container -->
+
+
+</body>
+
+
+</html>

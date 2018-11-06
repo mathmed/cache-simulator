@@ -1,0 +1,94 @@
+
+/* Estilos da nav bar */
+
+.uk-navbar-container:not(.uk-navbar-transparent) {
+    background:#00b258;
+    font-weight: bold;
+    height: 60px;
+}
+.uk-navbar-nav>li>a {
+    color: white;
+    
+}
+
+.uk-navbar-nav>li>a:hover, .uk-navbar-nav>li>a:active, .uk-navbar-nav>li>a:focus {
+    color: white;
+}
+
+
+/* Estilos de texto */
+
+h2 {
+    font-size: 30px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+h4 {
+    font-size: 16px;
+}
+
+h5 {
+    font-size: 14px;
+}
+
+.a-link {
+    color:#00b258;
+}
+
+.green-text {
+    color: #00b258;
+    font-weight: bold;
+}
+
+.a-link:hover {
+    text-decoration: none;
+    color:#007f3f;
+}
+
+/* Estilos de divs */
+
+.div-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.margin-top {
+    margin-top: 1em;
+}
+
+.margin-left {
+    margin-left: 1em;
+}
+
+.uk-input {
+    width: 1100px!important;
+    height: 30px;
+    margin-left: -60px;
+}
+
+.uk-grid-margin, .uk-grid+.uk-grid, .uk-grid>.uk-grid-margin{
+    margin-top:5px!important;
+}
+
+
+/* Estilos de botões */
+.uk-button {
+    padding: 0 15px;
+    line-height: 30px;
+}
+
+/* Estilos da tabela */
+.uk-table td {
+    padding: 0;
+    text-align: center; 
+}
+
+.uk-table th {
+    padding: 0;
+    text-align: center;
+}
+
