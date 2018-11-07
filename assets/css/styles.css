@@ -38,6 +38,10 @@ h5 {
     color:#00b258;
 }
 
+*+.uk-h1, *+.uk-h2, *+.uk-h3, *+.uk-h4, *+.uk-h5, *+.uk-h6, *+h1, *+h2, *+h3, *+h4, *+h5, *+h6 {
+    margin-top: 0;
+}
+
 .green-text {
     color: #00b258;
     font-weight: bold;

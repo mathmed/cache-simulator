@@ -57,13 +57,23 @@
                 <h3><b>Informações da Cache</b></h3>
 
                 <div class = "row">
-                    <div class = "col-md-8"><label for = "tam-cache">Tamanho da cache (potência de 2)</label></div>
-                    <div class = "col-md-2"> <input id = "tam_cache" type = "number" class = "uk-input"></div>
+                    <div class = "col-md-8"><label for = "tam-memoria">Memória (Ex: 8B, 16KB, 32MB, 4GB)</label></div>
+                    <div class = "col-md-2"> <input id = "tam-memoria" class = "uk-input"></div>
                 </div>
 
                 <div class = "row">
-                    <div class = "col-md-8"><label for = "tam-cache">Palavras por bloco (potência de 2)</label></div>
-                    <div class = "col-md-2"><input id = "qtd_palavras" type = "number" class = "uk-input"></div>
+                    <div class = "col-md-8"><label for = "slots-cache">Slots cache (potência de 2)</label></div>
+                    <div class = "col-md-2"> <input id = "slots-cache" type = "number" class = "uk-input"></div>
+                </div>
+
+                <div class = "row">
+                    <div class = "col-md-8"><label for = "slots-conjunto">Slots por conjunto (potência de 2)</label></div>
+                    <div class = "col-md-2"><input id = "slots-conjunto" type = "number" class = "uk-input"></div>
+                </div>
+
+                <div class = "row">
+                    <div class = "col-md-8"><label for = "palavras-slot">Palavras por slot (potência de 2)</label></div>
+                    <div class = "col-md-2"><input id = "palavras-slot" type = "number" class = "uk-input"></div>
                 </div>
 
                 <button id = 'gerar-cache' type = "button" class = "uk-button uk-button-primary margin-top">Gerar Cache</button>
