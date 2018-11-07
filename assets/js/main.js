@@ -49,28 +49,41 @@ $(document).ready(function(){
         /* array de caracteres válidos para instrução */
         const caracteres = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
 
+        var instrucoes = "";
         var instrucao = "";
 
-        /* criando as instruções */
-        for(var i = 0; i < 10; i++){
-            
-            for(var j = 0; j < tam_instrucao; j++)
-                instrucao+= caracteres[Math.floor(Math.random() * 15)]; 
-            
+        /* contator de instruções aceitas */
+        var instrucoes_aceitas = 0;
 
-            /* verifica se é a primeira instrução adicionad */
-            if(i == 0){
-                $('#instrucao-atual').val(instrucao);
-                instrucao = "";
+        /* criando as instruções */
+        for(var i = 0; instrucoes_aceitas < 10; i++){
+            
+            for(var j = 0; j < tam_instrucao; j++){
+                instrucao += caracteres[Math.floor(Math.random() * 15)]; 
             }
-            if(i != 0)
-                instrucao += ",";
-        }   
+
+            /* verifica se a instrução é válida */
+            if(valida_instrucao(instrucao)){
+
+                instrucoes_aceitas += 1;
+                instrucoes += instrucao;
+                instrucao = "";
+
+                    /* verifica se é a primeira instrução adicionada */
+                    if(i == 0){
+                        $('#instrucao-atual').val(instrucao);
+                        instrucoes = "";
+                    }
+
+                    if(i != 0)
+                        instrucoes += ",";
+                }   
+            }   
 
         /* removendo a última e a primeira vírgula */
-        instrucao = instrucao.substring(',', instrucao.length - 1)
+        instrucoes = instrucoes.substring(',', instrucoes.length - 1)
 
-        $('#prox-instrucoes').val(instrucao);
+        $('#prox-instrucoes').val(instrucoes);
 
     })
 
@@ -85,6 +98,9 @@ $(document).ready(function(){
 
         /* adicionando 0 se precisar */
         instrucao = add0(instrucao);
+
+        /* função para gerar tabela */
+        config_table(instrucao)
         
 
     })
@@ -165,6 +181,11 @@ function criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot){
             "<h5>A Cache precisa de "+convert(implementacao)+" para ser implementada</h5>"+
             "<br>"+
         "</div>";
+
+        /* adicinando valores nos inputs escondidos */
+        $("#tag").val(tag);
+        $("#indice").val(indice);
+        $("#offset").val(offset);
         
 
     
@@ -285,26 +306,73 @@ function convert(num){
 const convertBin = (baseFrom, baseTo) => number => parseInt(number, baseFrom).toString(baseTo);
 
 const hex2bin = convertBin(16, 2);
+const bin2dec = convertBin(2, 10);
+
 
 /* função para preencher os 0's falantes em um conjunto de bits */
 function add0(instrucao){
     
     /* verificando tamanho da memória para tamanho das instruções */
-    const tam_mem = valida_tam_memoria($("#tam-memoria").val())
-    var tam_instrucao = (Math.ceil(Math.log2(tam_mem))/4).toString();
+    const tam_mem = valida_tam_memoria($("#tam-memoria").val());
+    var tam_instrucao = Math.ceil(Math.log2(tam_mem));
 
     /* caso a instrução já esteja no tamanho correto */
     if(instrucao.length == tam_instrucao) return instrucao;
 
     else{
 
-        const faltante = instrucao.length - tam_instrucao;
+        instrucao = String(instrucao);
+
+        const faltante = tam_instrucao - instrucao.length;
         var add = "";
 
         for(var i = 0; i < faltante; i ++)
-            add+= "0";
-        
+            add += "0";
+
         return add+instrucao;
     }
 
+}
+
+/* função para verificar os miss e hits */
+function config_table(instrucao){
+
+    /* recuperando a quantidade de bits necessários para cada campo */
+    const tag = $("#tag").val();
+    const offset = $("#offset").val();
+
+    const tag_table = instrucao.substring(0, tag)
+    const tag_indice = instrucao.substring(tag, instrucao.length-offset);
+    const n_indice = bin2dec(parseInt(tag_indice)); 
+
+    const string = 
+        "<tr>"+
+            "<td>"+"("+n_indice+") "+tag_indice+"</td>"+
+            "<td>1</td>"+
+            "<td>"+tag_table+"</td>"+
+            "<td>"+$("#palavras-slot").val() + " palavra(s)" +"</td>"+
+        "</tr>";
+    
+    $("#body-table").append(string);
+
+
+}
+
+/* função para validar uma instrução */
+function valida_instrucao(instrucao){
+
+    /* recuperando a quantidade de bits necessários para cada campo */
+    const tag = $("#tag").val();
+    const indice = $("#indice").val();
+    const offset = $("#offset").val();
+
+    /* recebendo a instrução em binário */
+    instrucao = add0(hex2bin(instrucao));
+
+    /* verifica se o índice da instrução é menor ou igual o índice de quantidade de slots */
+    
+    if(instrucao.length == parseInt(tag)+parseInt(indice)+parseInt(offset))
+        return true
+    else 
+        return false
 }

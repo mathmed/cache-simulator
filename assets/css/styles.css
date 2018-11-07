@@ -92,11 +92,11 @@ h5 {
 /* Estilos da tabela */
 .uk-table td {
     padding: 0;
-    text-align: center; 
+    /* text-align: center; */
 }
 
 .uk-table th {
     padding: 0;
-    text-align: center;
+    /* text-align: center; */
 }
 

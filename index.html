@@ -46,6 +46,10 @@
             <h2>Simulador de memória cache</h2>
         </div>
 
+        <input class = 'off' id = 'tag' value = "">
+        <input class = 'off' id = 'indice' value = "">
+        <input class = 'off' id = 'offset' value = "">
+
         <div class = "div-center">
             <h3>By: <a class = "a-link" href = "https://github.com/mathmed" target = "_blank">@mathmed</a></h3>
         </div>
@@ -99,10 +103,10 @@
                         </div>
                         <div class = 'row'>
                             <div class = 'col-md-4'>
-                                <label>Próximas (virgula para separar)</label>
+                                <label>Próximas</label>
                             </div>
                             <div class = 'col-md-6'>
-                                <input id = 'prox-instrucoes' class = 'uk-input'>
+                                <input id = 'prox-instrucoes' class = 'uk-input' placeholder="Ex: A56, B19">
                             </div>
                         </div>
                         <div class = 'row'>
@@ -115,7 +119,7 @@
                             </div>
                     </div>
                 </div>
-
+                <h3 class = 'green-text margin-top'>Estado atual da Cache</h3>
                 <table class="uk-table uk-table-divider" id = "table">
                     <thead>
                         <tr>
@@ -125,6 +129,10 @@
                             <th>Dados</th>
                         </tr>
                     </thead>
+
+                    <tbody id = "body-table">
+                        
+                    </tbody>
                 </table>
             </div>
 
