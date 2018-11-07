@@ -8,7 +8,10 @@ $(document).ready(function(){
     $("#gerar-cache").click(function(){
 
         $("#msg").remove();
-        $("#table-info").remove();        
+        $("#table-info").remove();  
+        $("#body-table").remove();
+        $("#table").append("<tbody id = 'body-table'></tbody>");
+        
         /* guardando os parâmetros enviados */
         var tam_memoria = $("#tam-memoria").val();
         var slots_cache = $("#slots-cache").val();
@@ -42,44 +45,28 @@ $(document).ready(function(){
     $("#gerar-instrucoes").click(function(){
 
         /* verificando tamanho da memória para tamanho das instruções */
-        const tam_mem = valida_tam_memoria($("#tam-memoria").val())
+        const tam_mem = $("#tam-memoria-hidden").val();
         
-        var tam_instrucao = Math.ceil(Math.log2(tam_mem))/4;
-
-        /* array de caracteres válidos para instrução */
-        const caracteres = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
-
         var instrucoes = "";
         var instrucao = "";
 
-        /* contator de instruções aceitas */
-        var instrucoes_aceitas = 0;
-
         /* criando as instruções */
-        for(var i = 0; instrucoes_aceitas < 10; i++){
+        for(var i = 0; i < 10; i++){
             
-            for(var j = 0; j < tam_instrucao; j++){
-                instrucao += caracteres[Math.floor(Math.random() * 15)]; 
+            instrucao = dec2hex((Math.floor(Math.random() * tam_mem-1))); 
+            instrucoes += instrucao;
+
+            /* verifica se é a primeira instrução adicionada */
+            if(i == 0){
+                $('#instrucao-atual').val(instrucao);
+                instrucoes = "";
             }
 
-            /* verifica se a instrução é válida */
-            if(valida_instrucao(instrucao)){
-
-                instrucoes_aceitas += 1;
-                instrucoes += instrucao;
-                instrucao = "";
-
-                    /* verifica se é a primeira instrução adicionada */
-                    if(i == 0){
-                        $('#instrucao-atual').val(instrucao);
-                        instrucoes = "";
-                    }
-
-                    if(i != 0)
-                        instrucoes += ",";
-                }   
-            }   
-
+            if(i != 0)
+                instrucoes += ",";        
+            instrucao = ""; 
+        }
+        
         /* removendo a última e a primeira vírgula */
         instrucoes = instrucoes.substring(',', instrucoes.length - 1)
 
@@ -92,15 +79,22 @@ $(document).ready(function(){
         
         /* pegando a instrução atual */
         var instrucao = $("#instrucao-atual").val();
+
+        /* verifica se a instrução é valida */
+        if(valida_instrucao(instrucao)){
         
-        /* transformando em binario */
-        instrucao = hex2bin(instrucao).toString();
+            /* transformando em binario */
+            instrucao = hex2bin(instrucao).toString();
 
-        /* adicionando 0 se precisar */
-        instrucao = add0(instrucao);
+            /* adicionando 0 se precisar */
+            instrucao = add0(instrucao);
 
-        /* função para gerar tabela */
-        config_table(instrucao)
+            /* função para gerar tabela */
+            config_table(instrucao);
+
+        }else{
+            alert("Instrução inválida");
+        }
         
 
     })
@@ -221,12 +215,15 @@ function valida_tam_memoria(tam_memoria){
             switch(tipo){
 
                 case "gb":
+                    $("#tam-memoria-hidden").val(tam * 1024 * 1024 * 1024)
                     return tam * 1024 * 1024 * 1024;
 
                 case "mb":
+                    $("#tam-memoria-hidden").val(tam * 1024 * 1024)
                     return tam * 1024 * 1024;
 
                 case "kb":
+                    $("#tam-memoria-hidden").val(tam * 1024)
                     return tam * 1024;
             }
 
@@ -307,6 +304,8 @@ const convertBin = (baseFrom, baseTo) => number => parseInt(number, baseFrom).to
 
 const hex2bin = convertBin(16, 2);
 const bin2dec = convertBin(2, 10);
+const dec2hex = convertBin(10, 16);
+const hex2dec = convertBin(16, 10)
 
 
 /* função para preencher os 0's falantes em um conjunto de bits */
@@ -345,6 +344,19 @@ function config_table(instrucao){
     const tag_indice = instrucao.substring(tag, instrucao.length-offset);
     const n_indice = bin2dec(parseInt(tag_indice)); 
 
+    /* Apagando a instrução atual */
+    $("#instrucao-atual").val("");
+
+    /* pegando a próxima instrução */
+    const prox_instrucao = $("#prox-instrucoes").val().split(",")[0];
+
+    /* guardando as demais instruções */
+    const outras_instrucoes = $("#prox-instrucoes").val().split(/,(.+)/)[1];
+
+    /* guardando nos inputs */
+    $("#instrucao-atual").val(prox_instrucao);
+    $("#prox-instrucoes").val(outras_instrucoes);
+
     const string = 
         "<tr>"+
             "<td>"+"("+n_indice+") "+tag_indice+"</td>"+
@@ -361,18 +373,24 @@ function config_table(instrucao){
 /* função para validar uma instrução */
 function valida_instrucao(instrucao){
 
-    /* recuperando a quantidade de bits necessários para cada campo */
-    const tag = $("#tag").val();
-    const indice = $("#indice").val();
-    const offset = $("#offset").val();
-
-    /* recebendo a instrução em binário */
-    instrucao = add0(hex2bin(instrucao));
-
-    /* verifica se o índice da instrução é menor ou igual o índice de quantidade de slots */
+    /* recuperando o tamanho da memória */
+    const tam_mem = $("#tam-memoria-hidden").val();
     
-    if(instrucao.length == parseInt(tag)+parseInt(indice)+parseInt(offset))
-        return true
-    else 
-        return false
+
+    if(instrucao != ""){
+
+        /* recebendo a instrução em decimal */
+        instrucao = hex2dec(instrucao);
+
+        console.log(instrucao)
+
+        console.log(tam_mem)
+
+        /* verifica se está dentro do permitido  */
+        if(parseInt(instrucao) <= parseInt(tam_mem))
+            return true
+
+        else return false
+
+    }else return false;
 }
