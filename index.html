@@ -62,8 +62,8 @@
                 </div>
 
                 <div class = "row">
-                    <div class = "col-md-8"><label for = "slots-cache">Slots cache (potência de 2)</label></div>
-                    <div class = "col-md-2"> <input id = "slots-cache" type = "number" class = "uk-input"></div>
+                    <div class = "col-md-8"><label for = "slots-cache">Slots cache (Ex: 4K)</label></div>
+                    <div class = "col-md-2"> <input id = "slots-cache" class = "uk-input"></div>
                 </div>
 
                 <div class = "row">
@@ -86,6 +86,35 @@
             
             <div class = "col-md-1"></div>
             <div class = "col-md-6">
+
+                <div id = "info-enderecos">
+                    <div id = 'enderecos' class = 'off'>
+                        <div class = 'row'>
+                            <div class = 'col-md-4'>
+                                <label>Instrução atual (hex)</label>
+                            </div>
+                            <div class = 'col-md-6'>
+                                <input id = 'instrucao-atual' class = 'uk-input'>
+                            </div>
+                        </div>
+                        <div class = 'row'>
+                            <div class = 'col-md-4'>
+                                <label>Próximas (virgula para separar)</label>
+                            </div>
+                            <div class = 'col-md-6'>
+                                <input id = 'prox-instrucoes' class = 'uk-input'>
+                            </div>
+                        </div>
+                        <div class = 'row'>
+                            <div class = 'col-md-3'>
+                                <button id = 'gerar-instrucoes' type = 'button' class = 'uk-button uk-button-secondary margin-top'>Gerar aleatório</button>
+                            </div>
+                            <div class = 'col-md-3'>
+                                <button id = 'submeter' type = 'button' class = 'uk-button uk-button-primary margin-top'>Submeter</button>
+                            </div>
+                            </div>
+                    </div>
+                </div>
 
                 <table class="uk-table uk-table-divider" id = "table">
                     <thead>

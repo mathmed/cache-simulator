@@ -2,43 +2,98 @@
 
 /* função para gerar tabela cache */
 $(document).ready(function(){
+    
 
     /*  função que é chamada quando o botão "Gerar cache é clicado" */
     $("#gerar-cache").click(function(){
 
         $("#msg").remove();
-        $("#table-info").remove();
-        
+        $("#table-info").remove();        
         /* guardando os parâmetros enviados */
         var tam_memoria = $("#tam-memoria").val();
-        const slots_cache = $("#slots-cache").val();
+        var slots_cache = $("#slots-cache").val();
         const slots_conjunto = $("#slots-conjunto").val();
         const palavras_slot = $("#palavras-slot").val();
 
         /* função para validar tamanho da memória */
         tam_memoria = valida_tam_memoria(tam_memoria);
 
-        if(tam_memoria > 0){
+        /* função para validar slots da cache */
+        slots_cache = valida_slots_cache(slots_cache);
+
+        if(tam_memoria > 0 && slots_cache > 0){
 
             /* verifica se os campos informados são potências de 2 */
-            if(verifica_potencia(slots_cache, slots_conjunto, palavras_slot)){
+            if(verifica_potencia(slots_conjunto, palavras_slot)){
 
                 /* criando informações sobre a cache */
-                criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot);
+                mapeamento = criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot);
 
-            }
+                /* criando a tela para informar endereços */
+                criar_cache(mapeamento);
 
+            }else
+                $("#msgs").append("<div id = 'msg' class='uk-alert uk-alert-danger'>Não foi possível criar a Cache, verifique se inseriu valores aceitos.</div>");
+            
         }
+    })
+
+    /* função para gerar instruções aleatóriamente */
+    $("#gerar-instrucoes").click(function(){
+
+        /* verificando tamanho da memória para tamanho das instruções */
+        const tam_mem = valida_tam_memoria($("#tam-memoria").val())
+        
+        var tam_instrucao = Math.ceil(Math.log2(tam_mem))/4;
+
+        /* array de caracteres válidos para instrução */
+        const caracteres = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+
+        var instrucao = "";
+
+        /* criando as instruções */
+        for(var i = 0; i < 10; i++){
+            
+            for(var j = 0; j < tam_instrucao; j++)
+                instrucao+= caracteres[Math.floor(Math.random() * 15)]; 
+            
+
+            /* verifica se é a primeira instrução adicionad */
+            if(i == 0){
+                $('#instrucao-atual').val(instrucao);
+                instrucao = "";
+            }
+            if(i != 0)
+                instrucao += ",";
+        }   
+
+        /* removendo a última e a primeira vírgula */
+        instrucao = instrucao.substring(',', instrucao.length - 1)
+
+        $('#prox-instrucoes').val(instrucao);
 
     })
 
+    /* função para gerar os hits e os misses */
+    $("#submeter").click(function(){
+        
+        /* pegando a instrução atual */
+        var instrucao = $("#instrucao-atual").val();
+        
+        /* transformando em binario */
+        instrucao = hex2bin(instrucao).toString();
+
+        /* adicionando 0 se precisar */
+        instrucao = add0(instrucao);
+        
+
+    })
 })
 
 /* função para verificar se os campos informados são potência de 2 */
-function verifica_potencia(slots_cache, slots_conjunto, palavras_slot){
+function verifica_potencia(slots_conjunto, palavras_slot){
     if(
-        ((Math.log(slots_cache)/Math.log(2)) % 1 == 0)
-        && ((Math.log(slots_conjunto)/Math.log(2)) % 1 == 0)
+        ((Math.log(slots_conjunto)/Math.log(2)) % 1 == 0)
         && ((Math.log(palavras_slot)/Math.log(2)) % 1 == 0)
         ) return true;
     
@@ -46,14 +101,18 @@ function verifica_potencia(slots_cache, slots_conjunto, palavras_slot){
     
 }
 
+function criar_cache(mapeamento){
 
-function criar_cache(qtd_palavras){
-
-    $("#table").append("<tbody id = 'body-table'></tbody>");
+    /* verificando qual o tipo de mapeamento */
     
-    for(var i = 0; i < qtd_palavras; i++)
-        $("#body-table").append("<tr><td>"+i+"</td><td>0</td><td>-</td><td>-</td></tr>")
-
+    /* caso totalmente associativo */
+    if(mapeamento[0] == "T")
+        $("#info-enderecos").append("<div id = 'msg' class='uk-alert uk-alert-warning'>A cache é totalmente associativa, não é possível haver colisões.</div>");
+    
+    /* no caso de um mapeamento direto */
+    else
+        /* chamando função que cria a interface de inserção de instruções */
+        $("#enderecos").removeClass("off");
 
 }
 
@@ -61,7 +120,7 @@ function criar_cache(qtd_palavras){
 function criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot){
 
     /* quantidade de bits do índice */
-    const indice = Math.log2(slots_cache);
+    const indice = Math.log2(slots_cache/slots_conjunto);
     
     /* quantidade de bits do offset */
     const offset = 2 + Math.log2(palavras_slot);
@@ -74,6 +133,12 @@ function criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot){
 
     /* quantidade de bits para cache ser implemenada */
     const implementacao = bits_dados + (slots_cache * slots_conjunto) + (slots_cache * slots_conjunto * tag)
+
+    /* verifica qual o tipo de mapeamento */
+    var mapeamento;
+    if(indice == 0) mapeamento = "Totalmente Associativo";
+    else if(slots_conjunto == 1) mapeamento = "Direto";
+    else mapeamento = "Mapeamento associativo por conjuntos, "+ slots_conjunto + " vias";
 
     /* adicinando na tela */
     const string = 
@@ -95,6 +160,7 @@ function criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot){
                     "</tr>"+
                 "</tbody>"+
             "</table>"+
+            "<h5>O mapeamento utilizado é "+mapeamento+"</h5>"+
             "<h5>A Cache tem "+convert(bits_dados)+" de dados</h5>"+
             "<h5>A Cache precisa de "+convert(implementacao)+" para ser implementada</h5>"+
             "<br>"+
@@ -103,6 +169,7 @@ function criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot){
 
     
     $("#div-table-info").append(string)
+    return mapeamento;
 
 }
 
@@ -153,7 +220,49 @@ function valida_tam_memoria(tam_memoria){
     }
 }
 
-/* função para converter bases */
+/* Função para validar a quantidade de slots de memória informado */
+function valida_slots_cache(slots_cache){
+
+    /* retirando possíveis espaços */
+    slots_cache = slots_cache.split(" ").join("");
+
+    var tam = "";
+    var tipo = "";
+    
+    /* Separando os números das quantidades */
+    for(var i = 0; i< slots_cache.length; i++)
+        if(slots_cache[i] / 1 == slots_cache[i]) tam += slots_cache[i];
+        else tipo+= slots_cache[i];
+
+    tipo = tipo.toLowerCase();
+
+    /* verifica se o tamanho é maior que 0 */
+    if(tam > 0){
+
+        /* verifica se o tipo informado é aceito */
+        if(tipo == "k")
+            return tam*1024;
+
+        else if (tipo == "")
+            if(Math.log(tam)/Math.log(2) % 1 == 0){
+                return tam;
+            }else{
+                $("#msgs").append("<div id = 'msg' class='uk-alert uk-alert-danger'>Não foi possível criar a Cache, verifique se inseriu valores aceitos.</div>");
+                return 0;
+            }
+        
+         else {
+            $("#msgs").append("<div id = 'msg' class='uk-alert uk-alert-danger'>Não foi possível criar a Cache, verifique se inseriu valores aceitos.</div>");
+            return 0;
+        }
+
+    }else{
+        $("#msgs").append("<div id = 'msg' class='uk-alert uk-alert-danger'>Não foi possível criar a Cache, verifique se inseriu valores aceitos.</div>");
+        return 0;
+    }
+}
+
+/* funções para converter bases */
 function convert(num){
 
     /* transformando em byte */
@@ -171,4 +280,31 @@ function convert(num){
     if(num/1024 >= 1) num = num/1024;
     else return num+ "GB";
     
+}
+
+const convertBin = (baseFrom, baseTo) => number => parseInt(number, baseFrom).toString(baseTo);
+
+const hex2bin = convertBin(16, 2);
+
+/* função para preencher os 0's falantes em um conjunto de bits */
+function add0(instrucao){
+    
+    /* verificando tamanho da memória para tamanho das instruções */
+    const tam_mem = valida_tam_memoria($("#tam-memoria").val())
+    var tam_instrucao = (Math.ceil(Math.log2(tam_mem))/4).toString();
+
+    /* caso a instrução já esteja no tamanho correto */
+    if(instrucao.length == tam_instrucao) return instrucao;
+
+    else{
+
+        const faltante = instrucao.length - tam_instrucao;
+        var add = "";
+
+        for(var i = 0; i < faltante; i ++)
+            add+= "0";
+        
+        return add+instrucao;
+    }
+
 }

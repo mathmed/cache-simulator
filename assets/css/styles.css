@@ -1,6 +1,7 @@
 
 /* Estilos da nav bar */
 
+
 .uk-navbar-container:not(.uk-navbar-transparent) {
     background:#00b258;
     font-weight: bold;
@@ -31,7 +32,7 @@ h4 {
 }
 
 h5 {
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .a-link {
@@ -78,6 +79,9 @@ h5 {
     margin-top:5px!important;
 }
 
+.off {
+    display: none;
+}
 
 /* Estilos de botões */
 .uk-button {
