@@ -343,7 +343,7 @@ function add0(instrucao){
 /* função para gerar a tabela de endereçamento após a submissão de um endereço */
 function config_table(instrucao){
 
-    /* removendo mensagem */
+    /* removendo mensagem de HIT/MISS */
     $("#msg-miss-hit").remove();
 
     /* recuperando a quantidade de bits necessários para cada campo */
@@ -360,13 +360,15 @@ function config_table(instrucao){
     var table = $('#body-table');
     var existe = false;
     var index_existe = false;
+    var qtd_slots_usados = 0;
     var mensagem = "";
+    var enderecamento = "";
 
     /* verifica qual o tipo de endereçamento */
-    if($("#slots-conjunto").val() > 1)
+    if($("#slots-conjunto").val() == 1)
         enderecamento = "direto";
     else enderecamento = "associativo";
-    
+
 
     /* Verificando se existe o endereço enviado na Cache */
     table.find('tr').each(function(){
@@ -387,33 +389,55 @@ function config_table(instrucao){
             mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-success'>HIT! O endereço foi encontrado na Cache. </div>"
             
         }
-         if(indice == tag_indice) index_existe = indice;
+        
+        if(indice == tag_indice){
+            qtd_slots_usados++;
+            index_existe = indice;
+        }
             
     });
+    
+    /* Apagando a instrução atual */
+    $("#instrucao-atual").val("");
+
+    /* pegando a próxima instrução */
+    const prox_instrucao = $("#prox-instrucoes").val().split(",")[0];
+
+    /* guardando as demais instruções */
+    const outras_instrucoes = $("#prox-instrucoes").val().split(/,(.+)/)[1];
+
+    /* guardando nos inputs */
+    $("#instrucao-atual").val(prox_instrucao);
+    $("#prox-instrucoes").val(outras_instrucoes);
 
     /* Caso o endereço não existe, adicioná-lo */
     if(!existe){
 
-        /* Apagando a instrução atual */
-        $("#instrucao-atual").val("");
-
-        /* pegando a próxima instrução */
-        const prox_instrucao = $("#prox-instrucoes").val().split(",")[0];
-
-        /* guardando as demais instruções */
-        const outras_instrucoes = $("#prox-instrucoes").val().split(/,(.+)/)[1];
-
-        /* guardando nos inputs */
-        $("#instrucao-atual").val(prox_instrucao);
-        $("#prox-instrucoes").val(outras_instrucoes);
-
-        /* Caso o index inviado já exista, removê-lo para criar outro */
+        /* Caso o index inviado já exista, verifica o tipo de endereçamento */
         if(index_existe){
-            $("#"+index_existe).remove();
+            
+            if(enderecamento == "direto"){
+                $("#"+index_existe).remove();
+                /* Criando mensagem que aparecerá na tela */
+                mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O Index está ocupado mas com uma TAG diferente, a nova TAG foi carregada. </div>"
+            }
 
-            /* Criando mensagem que aparecerá na tela */
-            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O Index está ocupado mas com uma TAG diferente, a nova TAG foi carregada. </div>"
+            /* caso de endereçamento associativo */
+            else{
 
+                /* verifica se a quantidade de slots usados para esse indice é maior que o permitido */
+                if(qtd_slots_usados >= $("#slots-conjunto").val()){
+
+                    /* caso seja maior, é necessário apagar um slot para inserir o novo */
+                    $("#"+index_existe).remove();
+                    /* Criando mensagem que aparecerá na tela */
+                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O Index está ocupado mas com uma TAG diferente, a nova TAG foi carregada. </div>"
+                
+                }else{
+                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Esse espaço de memória não foi preenchido, o endereço será carregado. </div>"
+                }
+            }
+            
         }else{
             /* Criando mensagem que aparecerá na tela */
             mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Esse espaço de memória não foi preenchido, o endereço será carregado. </div>"
