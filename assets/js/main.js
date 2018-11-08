@@ -2,7 +2,6 @@
 
 /* função para gerar tabela cache */
 $(document).ready(function(){
-    
 
     /*  função que é chamada quando o botão "Gerar cache é clicado" */
     $("#gerar-cache").click(function(){
@@ -318,6 +317,7 @@ function add0(instrucao){
     /* caso a instrução já esteja no tamanho correto */
     if(instrucao.length == tam_instrucao) return instrucao;
 
+    /* se não preencher com os 0's faltantes */
     else{
 
         instrucao = String(instrucao);
@@ -325,49 +325,128 @@ function add0(instrucao){
         const faltante = tam_instrucao - instrucao.length;
         var add = "";
 
-        for(var i = 0; i < faltante; i ++)
-            add += "0";
+        for(var i = 0; i < faltante; i ++) add += "0";
 
         return add+instrucao;
     }
 
 }
 
-/* função para verificar os miss e hits */
+/* função para gerar a tabela de endereçamento após a submissão de um endereço */
 function config_table(instrucao){
+
+    /* removendo mensagem */
+    $("#msg-miss-hit").remove();
 
     /* recuperando a quantidade de bits necessários para cada campo */
     const tag = $("#tag").val();
     const offset = $("#offset").val();
 
+    /* formatando */
     const tag_table = instrucao.substring(0, tag)
     const tag_indice = instrucao.substring(tag, instrucao.length-offset);
-    const n_indice = bin2dec(parseInt(tag_indice)); 
+    const n_indice = bin2dec(parseInt(tag_indice));
 
-    /* Apagando a instrução atual */
-    $("#instrucao-atual").val("");
-
-    /* pegando a próxima instrução */
-    const prox_instrucao = $("#prox-instrucoes").val().split(",")[0];
-
-    /* guardando as demais instruções */
-    const outras_instrucoes = $("#prox-instrucoes").val().split(/,(.+)/)[1];
-
-    /* guardando nos inputs */
-    $("#instrucao-atual").val(prox_instrucao);
-    $("#prox-instrucoes").val(outras_instrucoes);
-
-    const string = 
-        "<tr>"+
-            "<td>"+"("+n_indice+") "+tag_indice+"</td>"+
-            "<td>1</td>"+
-            "<td>"+tag_table+"</td>"+
-            "<td>"+$("#palavras-slot").val() + " palavra(s)" +"</td>"+
-        "</tr>";
     
-    $("#body-table").append(string);
+    /* variáveis auxiliares */
+    var table = $('#body-table');
+    var existe = false;
+    var index_existe = false;
+    var mensagem = "";
+    
 
+    /* Verificando se existe o endereço enviado na Cache */
+    table.find('tr').each(function(){
 
+        $(this).removeClass("miss");
+        $(this).removeClass("hit");
+
+        var indice = ($(this).find(".indice").attr("indice"));
+        var tag = ($(this).find(".tag").attr("tag"));
+        var validade = ($(this).find(".validade").attr("validade"));
+
+        if(indice == tag_indice && tag == tag_table && validade == 1){
+
+            $(this).addClass("hit");
+            existe = true;
+
+            /* adicionando mensagem */
+            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-success'>HIT! O endereço foi encontrado na Cache. </div>"
+            
+        }
+         if(indice == tag_indice) index_existe = indice;
+            
+    });
+
+    /* Caso o endereço não existe, adicioná-lo */
+    if(!existe){
+
+        /* Apagando a instrução atual */
+        $("#instrucao-atual").val("");
+
+        /* pegando a próxima instrução */
+        const prox_instrucao = $("#prox-instrucoes").val().split(",")[0];
+
+        /* guardando as demais instruções */
+        const outras_instrucoes = $("#prox-instrucoes").val().split(/,(.+)/)[1];
+
+        /* guardando nos inputs */
+        $("#instrucao-atual").val(prox_instrucao);
+        $("#prox-instrucoes").val(outras_instrucoes);
+
+        /* Caso o index inviado já exista, removê-lo para criar outro */
+        if(index_existe){
+            $("#"+index_existe).remove();
+
+            /* Criando mensagem que aparecerá na tela */
+            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O Index está ocupado mas com uma TAG diferente, a nova TAG foi carregada. </div>"
+
+        }else{
+            /* Criando mensagem que aparecerá na tela */
+            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Esse espaço de memória não foi preenchido, o endereço será carregado. </div>"
+        }
+        
+
+        /* Linha que será inserida */
+        const string = 
+            "<tr class = 'miss' id = '"+tag_indice+"'>"+
+                "<td class = 'indice' indice_n = '"+n_indice+"' indice = '"+tag_indice+"'>"+"("+n_indice+") "+tag_indice+"</td>"+
+                "<td class = 'validade' validade = '1'>1</td>"+
+                "<td class = 'tag' tag = '"+tag_table+"'>"+tag_table+"</td>"+
+                "<td>"+$("#palavras-slot").val() + " palavra(s)" +"</td>"+
+            "</tr>";
+        
+
+        /* variáveis auxiliares */
+        var atual = "";
+        var primeiro = "";
+        var cont = 0;
+
+        /* verificando a posição da tabela em que será inserido */
+        table.find('tr').each(function(){
+
+            if(cont == 0) primeiro = $(this);
+
+            if($(this).find(".indice").attr("indice") < tag_indice )
+                atual = $(this);
+            
+            cont+=1;
+
+        })
+
+        if(!atual && !primeiro)
+            $("#body-table").append(string);
+
+        else{
+            if(atual)
+                $(string).insertAfter(atual);
+            else
+                $(string).insertBefore(primeiro);
+        }
+    }
+    
+    /* Adicionando mensagem do que ocorreu */
+    $("#div-msg-miss-hit").append(mensagem)
 }
 
 /* função para validar uma instrução */
@@ -376,21 +455,16 @@ function valida_instrucao(instrucao){
     /* recuperando o tamanho da memória */
     const tam_mem = $("#tam-memoria-hidden").val();
     
-
+    /* verificando se a instrução é vazia */
     if(instrucao != ""){
 
-        /* recebendo a instrução em decimal */
+        /* convertendo a instrução de hexa para decimal */
         instrucao = hex2dec(instrucao);
+        
+        /* verifica se está dentro do permitido (menor que o tamanho da memoria) */
+        if(parseInt(instrucao) <= parseInt(tam_mem)) return true;
 
-        console.log(instrucao)
-
-        console.log(tam_mem)
-
-        /* verifica se está dentro do permitido  */
-        if(parseInt(instrucao) <= parseInt(tam_mem))
-            return true
-
-        else return false
+        else return false;
 
     }else return false;
 }

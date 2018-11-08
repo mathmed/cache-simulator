@@ -95,6 +95,14 @@ h5 {
     /* text-align: center; */
 }
 
+.miss {
+    background: #ff7f7f;
+}
+
+.hit {
+    background: #81cc93;
+}
+
 .uk-table th {
     padding: 0;
     /* text-align: center; */
