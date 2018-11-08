@@ -19,6 +19,33 @@
 
 /* Estilos de texto */
 
+.miss-l {
+    color:#cc0000;
+    font-weight: bold;
+}
+
+.hit-l {
+    color:#0053b2;
+    font-weight: bold;
+}
+
+.hit-rate-l {
+    color:#1f7634;
+    font-weight: bold;
+}
+
+#miss {
+    margin-left: 50px;
+}
+
+#hit {
+    margin-left: 55px;
+}
+
+#hit-rate {
+    margin-left: 31px;
+}
+
 h2 {
     font-size: 30px;
 }

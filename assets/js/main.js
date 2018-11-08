@@ -9,7 +9,14 @@ $(document).ready(function(){
         $("#msg").remove();
         $("#table-info").remove();  
         $("#body-table").remove();
+        $("#rate").addClass("off");
+        $("#enderecos").addClass("off");
         $("#table").append("<tbody id = 'body-table'></tbody>");
+
+        /* Zerando as taxas */
+        document.getElementById("miss").innerHTML="0";
+        document.getElementById("hit").innerHTML="0";
+        document.getElementById("hit-rate").innerHTML="-";
         
         /* guardando os parâmetros enviados */
         var tam_memoria = $("#tam-memoria").val();
@@ -119,10 +126,11 @@ function criar_cache(mapeamento){
         $("#info-enderecos").append("<div id = 'msg' class='uk-alert uk-alert-warning'>A cache é totalmente associativa, não é possível haver colisões.</div>");
     
     /* no caso de um mapeamento direto */
-    else
+    else{
         /* chamando função que cria a interface de inserção de instruções */
         $("#enderecos").removeClass("off");
-
+        $("#rate").removeClass("off");
+    }
 }
 
 /* função para mostrar as informações da cache gerada */
@@ -279,7 +287,7 @@ function valida_slots_cache(slots_cache){
     }
 }
 
-/* funções para converter bases */
+/* funções para converter tipo de dados, MB, KB, GB, B */
 function convert(num){
 
     /* transformando em byte */
@@ -353,6 +361,11 @@ function config_table(instrucao){
     var existe = false;
     var index_existe = false;
     var mensagem = "";
+
+    /* verifica qual o tipo de endereçamento */
+    if($("#slots-conjunto").val() > 1)
+        enderecamento = "direto";
+    else enderecamento = "associativo";
     
 
     /* Verificando se existe o endereço enviado na Cache */
@@ -443,7 +456,18 @@ function config_table(instrucao){
             else
                 $(string).insertBefore(primeiro);
         }
+
+        /* Aumentando o miss */
+        document.getElementById("miss").innerHTML= parseInt($("#miss").text())+1;
+    
+    }else{
+        /* Aumentando o hit */
+        document.getElementById("hit").innerHTML= parseInt($("#hit").text())+1;
     }
+
+    /* atualizando a porcentagem */
+    const total = parseInt($("#hit").text()) + parseInt($("#miss").text());
+    document.getElementById("hit-rate").innerHTML= (parseInt($("#hit").text())/total * 100).toFixed(2) + "%"
     
     /* Adicionando mensagem do que ocorreu */
     $("#div-msg-miss-hit").append(mensagem)

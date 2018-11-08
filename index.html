@@ -16,8 +16,8 @@
 
     <link rel="stylesheet" href="assets/css/uikit.min.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/bootstrap.css" />
+
     <script src="assets/js/uikit.min.js"></script>
-    <script src="assets/js/uikit-icons.min.js"></script>
 
     <!-- Incluindo assets personalizados -->
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/styles.css" />
@@ -33,10 +33,7 @@
 
             <div class="uk-navbar-left">
                 <ul class="uk-navbar-nav">
-                    <li class="uk-active"><a href="#">Mapeamento direto</a></li>
-                    <li><a href="#">Mapeamento n-associativo</a></li>
-                    <li><a href="#">Mapeamento completamente associativo</a></li>
-                    
+                    <li class=""><a href="#">Mapeamento de Memória Cache</a></li>
                 </ul>
             </div>
             
@@ -93,7 +90,15 @@
             <div class = "col-md-6">
 
                 <div id = "info-enderecos">
-                    <div id = 'enderecos' class = 'off'>
+
+                    <div id = 'rate' class = 'off'>
+                        <label class = 'miss-l'>Miss</label><span id = 'miss' class = 'miss-l'>0</span><br>
+                        <label class = 'hit-l'>Hits</label><span id = 'hit' class = 'hit-l'>0</span><br>
+                        <label class = 'hit-rate-l'>Hit rate</label><span class = 'hit-rate-l' id = 'hit-rate'>-</span>
+                        
+                    </div>
+
+                    <div id = 'enderecos' class = 'off margin-top'>
                         <div class = 'row'>
                             <div class = 'col-md-4'>
                                 <label>Instrução atual (hex)</label>
