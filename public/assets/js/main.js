@@ -384,12 +384,14 @@ function config_table(instrucao){
     var mensagem = "";
     var enderecamento = "";
 
+    /* pegando data atual para atualizar ultima vez usado */
+    const now = new Date();
+
     /* verifica qual o tipo de endereçamento */
     if($("#slots-conjunto").val() == 1)
         enderecamento = "direto";
     else enderecamento = "associativo";
-
-
+    
     /* Laço para verificar se existe o endereço enviado na Cache */
     table.find('tr').each(function(){
 
@@ -408,6 +410,9 @@ function config_table(instrucao){
             $(this).addClass("hit");
             existe = true;
 
+            /* atualizando a ultima data que foi utilizado */ 
+            $(this).attr("data-utilizado", now);
+
             /* adicionando mensagem */
             mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-success'>HIT! O endereço foi encontrado na Cache no indice "+indice+". </div>"
             
@@ -417,10 +422,8 @@ function config_table(instrucao){
 
             /* aumentando o contador de slots em uso daquele indice */
             qtd_slots_usados++;
-
             index_existe = indice;
-        }
-            
+        }      
     });
     
     /* Apagando a instrução atual do input */
@@ -453,14 +456,35 @@ function config_table(instrucao){
             /* caso de endereçamento associativo */
             else{
 
+                var remover = "";
+
                 /* verifica se a quantidade de slots usados para esse indice é maior que o permitido */
                 if(qtd_slots_usados >= $("#slots-conjunto").val()){
 
                     /* caso seja maior, é necessário atualizar algum dos slots, nesse caso o primeiro verificado é atualizado */
-                    $("#"+index_existe).remove();
+                    /* Laço para verificar se existe o endereço enviado na Cache */
+                    var remover; 
 
+                    table.find('tr').each(function(){
+
+                        /* recuperando as informações da linha */
+                        var indice = ($(this).find(".indice").attr("indice"));                        
+                        var contador = 0;
+
+                        /* verifica se dá um hit */
+                        if(indice == tag_indice){
+                            if(contador == 0)
+                                remover = $(this);
+                            else
+                                if($(this).attr("data-utilizado") < $(remover).attr("data-utilizado"))
+                                    remover = $(this);
+                            contador += 1
+                        }
+                    });
+
+                    $(remover).remove()
                     /* Criando mensagem que aparecerá na tela */
-                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Os slots do índice "+index_existe+" estãos ocupados mas com TAGs diferentes, a nova TAG foi carregada fazendo uma substituição. </div>"
+                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Os slots do índice "+index_existe+" estãos ocupados mas com TAGs diferentes, a nova TAG foi carregada fazendo uma substituição utilizando LRU. </div>"
                 
                 }else{
                     mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Existem slots vázios no indice "+index_existe+", o endereço será carregado em um dos slots </div>"
@@ -475,7 +499,7 @@ function config_table(instrucao){
 
         /* Linha que será inserida */
         const string = 
-            "<tr class = 'miss' id = '"+tag_indice+"'>"+
+            "<tr data-utilizado = '"+now+"' class = 'miss' id = '"+tag_indice+"'>"+
                 "<td class = 'indice' indice_n = '"+n_indice+"' indice = '"+tag_indice+"'>"+"("+n_indice+") "+tag_indice+"</td>"+
                 "<td class = 'validade' validade = '1'>1</td>"+
                 "<td class = 'tag' tag = '"+tag_table+"'>"+tag_table+"</td>"+
