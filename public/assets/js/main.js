@@ -56,8 +56,12 @@ $(document).ready(function(){
         var instrucoes = "";
         var instrucao = "";
 
+        /* verificando o tanto de hits forçados que haverá */
+        var hits_forcados = Math.floor(Math.random() * 20);
+        var repeticoes = 0;
+
         /* criando as instruções */
-        for(var i = 0; i < 10; i++){
+        for(var i = 0; i < 20; i++){
             
             instrucao = dec2hex((Math.floor(Math.random() * tam_mem-1))); 
             instrucoes += instrucao;
@@ -68,17 +72,33 @@ $(document).ready(function(){
                 instrucoes = "";
             }
 
+            if(repeticoes < hits_forcados && i != 0){
+                instrucoes += "," + instrucao + "," + instrucao + "," + instrucao + "," + instrucao + "," + instrucao;
+                repeticoes+=1;
+            }
+
+
             if(i != 0)
                 instrucoes += ",";        
             instrucao = ""; 
         }
-        
+
         /* removendo a última e a primeira vírgula */
         instrucoes = instrucoes.substring(',', instrucoes.length - 1)
+        instrucoes = instrucoes.split(",")
 
+        /* randomizando as instruções */
+        for (var i = instrucoes.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = instrucoes[i];
+            instrucoes[i] = instrucoes[j];
+            instrucoes[j] = temp;
+        }
+        
         $('#prox-instrucoes').val(instrucoes);
 
     })
+
 
     /* função para gerar os hits e os misses */
     $("#submeter").click(function(){
@@ -117,6 +137,7 @@ function verifica_potencia(slots_conjunto, palavras_slot){
     
 }
 
+/* função para criar graficamente a tabela cache */
 function criar_cache(mapeamento){
 
     /* verificando qual o tipo de mapeamento */
@@ -355,7 +376,6 @@ function config_table(instrucao){
     const tag_indice = instrucao.substring(tag, instrucao.length-offset);
     const n_indice = bin2dec(parseInt(tag_indice));
 
-    
     /* variáveis auxiliares */
     var table = $('#body-table');
     var existe = false;
@@ -370,56 +390,64 @@ function config_table(instrucao){
     else enderecamento = "associativo";
 
 
-    /* Verificando se existe o endereço enviado na Cache */
+    /* Laço para verificar se existe o endereço enviado na Cache */
     table.find('tr').each(function(){
 
+        /* removendo mensagens de erro/sucesso */
         $(this).removeClass("miss");
         $(this).removeClass("hit");
 
+        /* recuperando as informações da linha */
         var indice = ($(this).find(".indice").attr("indice"));
         var tag = ($(this).find(".tag").attr("tag"));
         var validade = ($(this).find(".validade").attr("validade"));
 
+        /* verifica se dá um hit */
         if(indice == tag_indice && tag == tag_table && validade == 1){
 
             $(this).addClass("hit");
             existe = true;
 
             /* adicionando mensagem */
-            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-success'>HIT! O endereço foi encontrado na Cache. </div>"
+            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-success'>HIT! O endereço foi encontrado na Cache no indice "+indice+". </div>"
             
         }
         
         if(indice == tag_indice){
+
+            /* aumentando o contador de slots em uso daquele indice */
             qtd_slots_usados++;
+
             index_existe = indice;
         }
             
     });
     
-    /* Apagando a instrução atual */
+    /* Apagando a instrução atual do input */
     $("#instrucao-atual").val("");
 
-    /* pegando a próxima instrução */
+    /* pegando a próxima instrução do input */
     const prox_instrucao = $("#prox-instrucoes").val().split(",")[0];
 
-    /* guardando as demais instruções */
+    /* guardando as demais instruções no input*/
     const outras_instrucoes = $("#prox-instrucoes").val().split(/,(.+)/)[1];
 
     /* guardando nos inputs */
     $("#instrucao-atual").val(prox_instrucao);
     $("#prox-instrucoes").val(outras_instrucoes);
 
-    /* Caso o endereço não existe, adicioná-lo */
+    /* Caso o endereço não existe, adicioná-lo na cache */
     if(!existe){
 
         /* Caso o index inviado já exista, verifica o tipo de endereçamento */
         if(index_existe){
             
             if(enderecamento == "direto"){
+
+                /* Se o endereçamento for direto, irá substituir a instrução pela nova */
                 $("#"+index_existe).remove();
                 /* Criando mensagem que aparecerá na tela */
-                mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O Index está ocupado mas com uma TAG diferente, a nova TAG foi carregada. </div>"
+                mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O índice "+index_existe+" está ocupado com uma TAG diferente, a nova TAG foi carregada. </div>"
             }
 
             /* caso de endereçamento associativo */
@@ -428,19 +456,20 @@ function config_table(instrucao){
                 /* verifica se a quantidade de slots usados para esse indice é maior que o permitido */
                 if(qtd_slots_usados >= $("#slots-conjunto").val()){
 
-                    /* caso seja maior, é necessário apagar um slot para inserir o novo */
+                    /* caso seja maior, é necessário atualizar algum dos slots, nesse caso o primeiro verificado é atualizado */
                     $("#"+index_existe).remove();
+
                     /* Criando mensagem que aparecerá na tela */
-                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O Index está ocupado mas com uma TAG diferente, a nova TAG foi carregada. </div>"
+                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Os slots do índice "+index_existe+" estãos ocupados mas com TAGs diferentes, a nova TAG foi carregada fazendo uma substituição. </div>"
                 
                 }else{
-                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Esse espaço de memória não foi preenchido, o endereço será carregado. </div>"
+                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Existem slots vázios no indice "+index_existe+", o endereço será carregado em um dos slots </div>"
                 }
             }
             
         }else{
             /* Criando mensagem que aparecerá na tela */
-            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Esse espaço de memória não foi preenchido, o endereço será carregado. </div>"
+            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! o índice está sem instruções, a instrução atual será carregada nele.</div>"
         }
         
 
