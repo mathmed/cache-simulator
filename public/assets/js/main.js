@@ -499,7 +499,7 @@ function config_table(instrucao){
             
         }else{
             /* Criando mensagem que aparecerá na tela */
-            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O slot está vazio, a informação atual será carregada nele.</div>"
+            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O bit de validade é 0 e o slot está vazio, a informação atual será carregada nele.</div>"
         }
         
 
