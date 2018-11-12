@@ -288,7 +288,13 @@ function valida_slots_cache(slots_cache){
         /* verifica se o tipo informado é aceito */
         if(tipo == "k")
             return tam*1024;
+            
+        else if(tipo == "m")
+            return tam*1024*1024
 
+        else if(tipo == "g")
+            return tam*1024*1024*1024
+        
         else if (tipo == "")
             if(Math.log(tam)/Math.log(2) % 1 == 0){
                 return tam;
@@ -414,7 +420,7 @@ function config_table(instrucao){
             $(this).attr("data-utilizado", now);
 
             /* adicionando mensagem */
-            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-success'>HIT! O endereço foi encontrado na Cache no indice "+indice+". </div>"
+            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-success'>HIT! A informação foi encontrada na Cache no indice "+indice+". </div>"
             
         }
         
@@ -450,7 +456,7 @@ function config_table(instrucao){
                 /* Se o endereçamento for direto, irá substituir a instrução pela nova */
                 $("#"+index_existe).remove();
                 /* Criando mensagem que aparecerá na tela */
-                mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O índice "+index_existe+" está ocupado com uma TAG diferente, a nova TAG foi carregada. </div>"
+                mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O slot do índice "+index_existe+" está ocupado com uma TAG diferente, a nova informação foi carregada nesse slot. </div>"
             }
 
             /* caso de endereçamento associativo */
@@ -484,16 +490,16 @@ function config_table(instrucao){
 
                     $(remover).remove()
                     /* Criando mensagem que aparecerá na tela */
-                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Os slots do índice "+index_existe+" estãos ocupados mas com TAGs diferentes, a nova TAG foi carregada fazendo uma substituição utilizando LRU. </div>"
+                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Os slots do índice "+index_existe+" estãos todos ocupados, a nova informação foi carregada fazendo uma substituição utilizando LRU. </div>"
                 
                 }else{
-                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Existem slots vázios no indice "+index_existe+", o endereço será carregado em um dos slots </div>"
+                    mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! Existem slots vázios no indice "+index_existe+", a informação será carregada em um deles. </div>"
                 }
             }
             
         }else{
             /* Criando mensagem que aparecerá na tela */
-            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! o índice está sem instruções, a instrução atual será carregada nele.</div>"
+            mensagem = "<div id = 'msg-miss-hit' class='uk-alert uk-alert-danger'>MISS! O slot está vazio, a informação atual será carregada nele.</div>"
         }
         
 
