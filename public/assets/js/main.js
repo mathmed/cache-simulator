@@ -55,15 +55,23 @@ $(document).ready(function(){
         
         var instrucoes = "";
         var instrucao = "";
+        var colisao = "";
 
         /* verificando o tanto de hits forçados que haverá */
         var hits_forcados = Math.floor(Math.random() * 20);
+        var colisoes_forcadas = Math.floor(Math.random() * 20)
         var repeticoes = 0;
+        var colisoes = 0;
 
         /* criando as instruções */
-        for(var i = 0; i < 20; i++){
+        for(var i = 0; i < 10; i++){
             
-            instrucao = dec2hex((Math.floor(Math.random() * tam_mem-1))); 
+            instrucao =(Math.floor(Math.random() * tam_mem-1)); 
+            colisao = instrucao+1;
+
+            instrucao =  dec2hex(instrucao);
+            colisao = dec2hex(colisao);
+
             instrucoes += instrucao;
 
             /* verifica se é a primeira instrução adicionada */
@@ -75,6 +83,11 @@ $(document).ready(function(){
             if(repeticoes < hits_forcados && i != 0){
                 instrucoes += "," + instrucao + "," + instrucao + "," + instrucao + "," + instrucao + "," + instrucao;
                 repeticoes+=1;
+            }
+
+            if(colisoes < colisoes_forcadas && i != 0){
+                instrucoes += "," + colisao + "," + colisao;
+                colisoes++;
             }
 
 
@@ -234,6 +247,8 @@ function valida_tam_memoria(tam_memoria){
 
     tipo = tipo.toLowerCase();
 
+    if(tipo == "") tipo = 'b';
+
     /* verifica se o tamanho é maior que 0 */
     if(tam > 0){
 
@@ -253,6 +268,11 @@ function valida_tam_memoria(tam_memoria){
                 case "kb":
                     $("#tam-memoria-hidden").val(tam * 1024)
                     return tam * 1024;
+
+                case "b":
+                    $("#tam-memoria-hidden").val(tam);
+                    return tam;
+                    
             }
 
         } else {
