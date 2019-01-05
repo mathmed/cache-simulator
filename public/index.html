@@ -16,31 +16,34 @@
 
     <link rel="stylesheet" href="assets/css/uikit.min.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
 
     <script src="assets/js/uikit.min.js"></script>
 
     <!-- Incluindo assets personalizados -->
-    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/styles.css" />
-    <script src="assets/js/main.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/styles.css?version=1" />
+    <script src="assets/js/main.js?version=1"></script>
 
 </head>
 
 <body>
     
     <!-- Div container -->
-    <div class = "">
+    <div class = "margin-bottom">
         <nav class="uk-navbar-container" uk-navbar>
 
             <div class="uk-navbar-left">
                 <ul class="uk-navbar-nav">
-                    <li class=""><a href="#">Mapeamento de Memória Cache</a></li>
+                    <li><a class = "icon-nav" href="#">Mapeamento de Memória Cache</a></li>
+                    <li><a class = "icon-nav" href="https://github.com/mathmed/cache-simulator">Código fonte <i class = "icon margin-left fab fa-github"></i></a></li>
                 </ul>
             </div>
             
         </nav>
 
         <div class = "div-center margin-top">
-            <h2>Simulador de memória cache</h2>
+            <h1 class = "title"><b>Simulador de memória cache</b></h1>
         </div>
 
         <input class = 'off' id = 'tag' value = "">
@@ -48,15 +51,11 @@
         <input class = 'off' id = 'offset' value = "">
         <input class = 'off' id = 'tam-memoria-hidden' value = ''>
 
-        <div class = "div-center">
-            <h3>By: <a class = "a-link" href = "https://github.com/mathmed" target = "_blank">@mathmed</a></h3>
-        </div>
-
-        <div class = "margin-left margin-top row">
+        <div class = "margin-top row">
 
             <div class = "col-md-4">
 
-                <h3><b>Informações da Cache</b></h3>
+                <h3><b>Informações da memória</b></h3>
 
                 <div class = "row">
                     <div class = "col-md-8"><label for = "tam-memoria">Memória (Ex: 8B, 16KB, 32MB, 4GB)</label></div>
@@ -78,7 +77,11 @@
                     <div class = "col-md-2"><input id = "palavras-slot" type = "number" class = "uk-input"></div>
                 </div>
 
-                <button id = 'gerar-cache' type = "button" class = "uk-button uk-button-primary margin-top">Gerar Cache</button>
+                <div class = "row">
+                    <div class = "col-md-12">
+                        <button id = 'gerar-cache' type = "button" class = "uk-button uk-button-primary uk-button-blue margin-top"><i class = "fa fa-edit icon-button"></i>Gerar Cache</button>
+                    </div>
+                </div>
 
                 <div id = "msgs" class = "margin-top"></div>
 
@@ -91,10 +94,19 @@
 
                 <div id = "info-enderecos">
 
-                    <div id = 'rate' class = 'off'>
-                        <label class = 'miss-l'>Miss</label><span id = 'miss' class = 'miss-l'>0</span><br>
-                        <label class = 'hit-l'>Hits</label><span id = 'hit' class = 'hit-l'>0</span><br>
-                        <label class = 'hit-rate-l'>Hit rate</label><span class = 'hit-rate-l' id = 'hit-rate'>-</span>
+                    <div id = 'rate' class = 'off row'>
+
+                        <div class = "col-md-2">
+                            <label class = 'miss-l'>Miss: </label><span id = 'miss' class = 'miss-l'>0</span><br>
+                        </div>
+
+                        <div class = "col-md-2">
+                            <label class = 'hit-l'>Hits: </label><span id = 'hit' class = 'hit-l'>0</span><br>
+                        </div>
+
+                        <div class = "col-md-3">
+                            <label class = 'hit-rate-l'>Hit rate: </label><span class = 'hit-rate-l' id = 'hit-rate'>-</span>
+                        </div>
                         
                     </div>
 
@@ -117,12 +129,12 @@
                         </div>
                         <div class = 'row'>
                             <div class = 'col-md-3'>
-                                <button id = 'gerar-instrucoes' type = 'button' class = 'uk-button uk-button-secondary margin-top'>Gerar aleatório</button>
+                                <button id = 'gerar-instrucoes' type = 'button' class = 'uk-button uk-button-orange margin-top'><i class= "fa fa-random icon-button"></i>Aleatório</button>
                             </div>
                             <div class = 'col-md-3'>
-                                <button id = 'submeter' type = 'button' class = 'uk-button uk-button-primary margin-top'>Submeter</button>
+                                <button id = 'submeter' type = 'button' class = 'uk-button uk-button-primary uk-button-blue margin-top'><i class = "fa fa-check-double icon-button"></i>Submeter</button>
                             </div>
-                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id = "div-msg-miss-hit" class = 'margin-top'></div>
@@ -130,10 +142,10 @@
                 <table class="uk-table uk-table-divider" id = "table">
                     <thead>
                         <tr>
-                            <th>Índice</th>
-                            <th>Válido</th>
-                            <th>Tag</th>
-                            <th>Dados</th>
+                            <th><b>Índice</b></th>
+                            <th><b>Válido</b></th>
+                            <th><b>Tag</b></th>
+                            <th><b>Dados</b></th>
                         </tr>
                     </thead>
 
@@ -147,6 +159,18 @@
 
     </div>
     <!-- /Div container -->
+
+    <footer class = "footer">
+        <div class = "div-footer div-center">
+            <label class = "white bold">Sobre o desenvolvedor</label>
+            <div class = "icons">
+                <a href = "https://github.com/mathmed" target = "_blank"><i class = "fab fa-github"></i></a>
+                <a href = "https://www.facebook.com/mateus.medeiros.142035" target = "_blank"><i class = "fab fa-facebook-square"></i></a>
+                <a href = "https://www.instagram.com/_mathmed_/" target = "_blank"><i class = "fab fa-instagram"></i></a>
+                <a href = "https://www.linkedin.com/in/mateus-medeiros-0218b2150/" target = "_blank"><i class = "fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
 
 
 </body>

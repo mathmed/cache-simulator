@@ -26,24 +26,26 @@ $(document).ready(function(){
 
         /* função para validar tamanho da memória */
         tam_memoria = valida_tam_memoria(tam_memoria);
+        
+        if(tam_memoria > 0){
 
-        /* função para validar slots da cache */
-        slots_cache = valida_slots_cache(slots_cache);
+             /* função para validar slots da cache */
+            slots_cache = valida_slots_cache(slots_cache);
 
-        if(tam_memoria > 0 && slots_cache > 0){
+            if(slots_cache > 0){
 
-            /* verifica se os campos informados são potências de 2 */
-            if(verifica_potencia(slots_conjunto, palavras_slot)){
+                /* verifica se os campos informados são potências de 2 */
+                if(verifica_potencia(slots_conjunto, palavras_slot)){
 
-                /* criando informações sobre a cache */
-                mapeamento = criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot);
+                    /* criando informações sobre a cache */
+                    mapeamento = criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot);
 
-                /* criando a tela para informar endereços */
-                criar_cache(mapeamento);
+                    /* criando a tela para informar endereços */
+                    criar_cache(mapeamento);
 
-            }else
-                $("#msgs").append("<div id = 'msg' class='uk-alert uk-alert-danger'>Não foi possível criar a Cache, verifique se inseriu valores aceitos.</div>");
-            
+                }else
+                    $("#msgs").append("<div id = 'msg' class='uk-alert uk-alert-danger'>Não foi possível criar a Cache, verifique se inseriu valores aceitos.</div>");
+            }
         }
     })
 
@@ -211,9 +213,9 @@ function criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot){
                     "</tr>"+
                 "</tbody>"+
             "</table>"+
-            "<h5>O mapeamento utilizado é "+mapeamento+"</h5>"+
-            "<h5>A Cache tem "+convert(bits_dados)+" de dados</h5>"+
-            "<h5>A Cache precisa de "+convert(implementacao)+" para ser implementada</h5>"+
+            "<h5>O mapeamento utilizado é <span class = 'a-link bold'>"+mapeamento+"</span></h5>"+
+            "<h5>A Cache tem <span class = 'a-link bold'>"+convert(bits_dados)+"</span> de dados</h5>"+
+            "<h5>A Cache precisa de <span class = 'a-link bold'>"+convert(implementacao)+"</span> para ser implementada</h5>"+
             "<br>"+
         "</div>";
 
@@ -222,8 +224,6 @@ function criar_info(tam_memoria, slots_cache, slots_conjunto, palavras_slot){
         $("#indice").val(indice);
         $("#offset").val(offset);
         
-
-    
     $("#div-table-info").append(string)
     return mapeamento;
 
