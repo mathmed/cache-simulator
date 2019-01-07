@@ -8,9 +8,30 @@
     ],
     "rewrites": [
       {
-        "source": "**",
+        "source": "**/.*",
         "destination": "/index.html"
       }
-    ]
+    ],
+      "redirects": [ {
+        "source" : "/index.html",
+        "destination" : "https://simuladorcache.tk",
+        "type" : 301
+      }
+    ],
+    "headers": [{
+        "source": "**/*.@(jpg|jpeg|png|gif|css|js|woff)",
+        "headers": [{
+          "key": "Cache-Control",
+          "value": "max-age=2629743"
+        }]
+    },{
+    "source" : "404.html",
+    "headers" : [{
+      "key" : "Cache-Control",
+      "value" : "max-age=300"
+    }]
+  }]
+  
+    }
   }
-}
+  
