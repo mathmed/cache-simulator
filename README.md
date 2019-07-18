@@ -12,7 +12,7 @@ Ou acesse um dos links a seguir
 https://simulador-cache.firebaseapp.com/  
 https://simuladorcache.com
 
-Insira o tamanho da memória principal, os slots da cache, os slots por conjunto e a quantidad de palavras por slot e clique em "GERAR CACHE", o aplicativo acusará informações inválidas.
+Insira o tamanho da memória principal, os slots da cache, os slots por conjunto e a quantidade de palavras por slot e clique em "GERAR CACHE", o aplicativo acusará informações inválidas.
 Feito isso, insira manualmente as instruções ou clique em "GERAR ALEATÓRIO" e clique em submeter para buscar na Cache.
 O aplicativo mostrará o estado da Cache após cada submissão.
 
