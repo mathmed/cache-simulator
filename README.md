@@ -1,4 +1,4 @@
-# cache-simulator
+# Cache simulator
 Webapp para simular uma memória Cache
 
 ## Modo de uso
